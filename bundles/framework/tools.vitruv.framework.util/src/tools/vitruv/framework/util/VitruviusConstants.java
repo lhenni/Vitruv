@@ -12,6 +12,8 @@ public class VitruviusConstants {
 	private static final String Tuid_SEGMENT_SEPERATOR = "#";
 	private static final String DEFAULT_NAME_OF_NAME_FEAUTRE = "entityName";
 	private static final String FILE_EXT_SEPARATOR = ".";
+    private static final String VM_FILE_EXT = "variabilitymodel";
+
 	/**
 	 * Fields are needed as options to save correspondence instance (we need to
 	 * ignore dangling HREFs) Copied from XMLResource.java
@@ -86,4 +88,8 @@ public class VitruviusConstants {
 	public static String getTestProjectMarkerFileName() {
 		return TEST_PROJECT_MARKER_FILE_NAME;
 	}
+	
+    public static String getVMFileExt() {
+        return VM_FILE_EXT;
+    }
 }

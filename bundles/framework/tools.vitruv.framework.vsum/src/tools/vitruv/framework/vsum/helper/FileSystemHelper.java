@@ -249,4 +249,30 @@ public class FileSystemHelper {
         return folder;
     }
 
+    public VURI getVMVURI() {
+        File vaveFile = getVMFile();
+        return VURI.getInstance(EMFBridge.getEmfFileUriForFile(vaveFile));
+    }
+
+    public File getVMFile() {
+        String fileName = getVMFileName();
+        return getVMFile(fileName);
+    }
+
+    private static String getVMFileName() {
+        String fileExtSeparator = VitruviusConstants.getFileExtSeparator();
+        String fileExt = VitruviusConstants.getVMFileExt();
+        String fileName = "VaVe" + fileExtSeparator + fileExt;
+        return fileName;
+    }
+
+    public File getVMFile(final String fileName) {
+        File vaveFile = getFileInFolder(getVMFolder(), fileName);
+        return vaveFile;
+    }
+
+    private File getVMFolder() {
+        return getFolderInFolder(getVsumProjectFolder(), VsumConstants.VAVE_FOLDER_NAME);
+    }
+
 }

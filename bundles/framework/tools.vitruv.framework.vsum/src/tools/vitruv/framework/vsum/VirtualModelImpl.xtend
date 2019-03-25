@@ -69,6 +69,10 @@ class VirtualModelImpl implements InternalVirtualModel {
 		this.resourceRepository.getCorrespondenceModel();
 	}
 	
+	override getVariabilityModel() {
+		this.resourceRepository.getVariabilityModel();
+	}
+	
 	override getModelInstance(VURI modelVuri) {
 		return this.resourceRepository.getModel(modelVuri);
 	}
@@ -94,7 +98,14 @@ class VirtualModelImpl implements InternalVirtualModel {
 		// Save is done by the change propagator because it has to be performed before finishing sync
 		val result = changePropagator.propagateChange(change);
 		informPropagatedChangeListeners(result);
+		setUpVM(result);
 		return result;
+	}
+	
+	def private setUpVM(List<PropagatedChange> change) {
+		getVariabilityModel.addVersion(change)
+		reverseChanges(change)
+		getVariabilityModel.addVariationPoint("Watermarking")
 	}
 	
 	override reverseChanges(List<PropagatedChange> changes) {

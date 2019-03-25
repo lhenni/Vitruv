@@ -44,6 +44,7 @@ import tools.vitruv.framework.util.datatypes.VURI;
 import tools.vitruv.framework.uuid.UuidGeneratorAndResolver;
 import tools.vitruv.framework.uuid.UuidGeneratorAndResolverImpl;
 import tools.vitruv.framework.uuid.UuidResolver;
+import tools.vitruv.framework.variability.VariabilityModelImpl;
 import tools.vitruv.framework.vsum.ModelRepository;
 import tools.vitruv.framework.vsum.helper.FileSystemHelper;
 
@@ -55,8 +56,11 @@ public class ResourceRepositoryImpl implements ModelRepository, CorrespondencePr
 
     private final Map<VURI, ModelInstance> modelInstances;
     private InternalCorrespondenceModel correspondenceModel;
+    private VariabilityModelImpl variabilityModel;
     private final FileSystemHelper fileSystemHelper;
     private final File folder;
+
+    // private variabilitymodel.impl variabilityModel;
 
     private UuidGeneratorAndResolver uuidGeneratorAndResolver;
     private final Map<VitruvDomain, AtomicEmfChangeRecorder> domainToRecorder;
@@ -340,6 +344,21 @@ public class ResourceRepositoryImpl implements ModelRepository, CorrespondencePr
         });
     }
 
+    private void initializeVariabilityModel() {
+        createRecordingCommandAndExecuteCommandOnTransactionalDomain(() -> {
+            VURI variabilityVURI = this.fileSystemHelper.getVMVURI();
+            Resource variabilityResource = null;
+            if (URIUtil.existsResourceAtUri(variabilityVURI.getEMFUri())) {
+                logger.debug("Loading vave model from: " + this.fileSystemHelper.getVMVURI());
+                variabilityResource = this.resourceSet.getResource(variabilityVURI.getEMFUri(), true);
+            } else {
+                variabilityResource = this.resourceSet.createResource(variabilityVURI.getEMFUri());
+            }
+            this.variabilityModel = new VariabilityModelImpl(variabilityResource);
+            return null;
+        });
+    }
+
     /**
      * Returns the correspondence model in this model repository
      *
@@ -348,6 +367,10 @@ public class ResourceRepositoryImpl implements ModelRepository, CorrespondencePr
     @Override
     public CorrespondenceModel getCorrespondenceModel() {
         return this.correspondenceModel.getGenericView();
+    }
+
+    public VariabilityModelImpl getVariabilityModel() {
+        return this.variabilityModel;
     }
 
     private void loadVURIsOfVSMUModelInstances() {

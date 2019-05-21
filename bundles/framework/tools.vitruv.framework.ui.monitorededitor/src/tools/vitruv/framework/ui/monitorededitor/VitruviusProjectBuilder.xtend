@@ -2,7 +2,7 @@ package tools.vitruv.framework.ui.monitorededitor
 
 import org.apache.log4j.Logger
 import java.util.Set
-import tools.vitruv.framework.vsum.VirtualModelManager
+import tools.vitruv.framework.vsum.impl.VirtualModelManager
 import org.eclipse.core.resources.IncrementalProjectBuilder
 import tools.vitruv.framework.vsum.VirtualModel
 import java.util.HashSet

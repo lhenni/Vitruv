@@ -1,4 +1,4 @@
-package tools.vitruv.framework.vsum
+package tools.vitruv.framework.vsum.impl
 
 import java.util.List
 import org.apache.log4j.Logger

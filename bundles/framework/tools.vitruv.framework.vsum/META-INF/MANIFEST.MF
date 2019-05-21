@@ -8,8 +8,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.apache.log4j,
  org.eclipse.emf.transaction,
  org.eclipse.emf.ecore,
- org.eclipse.core.resources;visibility:=reexport,
- org.eclipse.core.runtime,
  tools.vitruv.framework.util,
  tools.vitruv.framework.tuid,
  tools.vitruv.framework.metamodel;visibility:=reexport,
@@ -23,5 +21,6 @@ Require-Bundle: org.apache.log4j,
  org.eclipse.emf.ecore.xmi
 Export-Package: tools.vitruv.framework.vsum,
  tools.vitruv.framework.vsum.helper,
+ tools.vitruv.framework.vsum.impl,
  tools.vitruv.framework.vsum.modelsynchronization
 Bundle-Vendor: vitruv.tools

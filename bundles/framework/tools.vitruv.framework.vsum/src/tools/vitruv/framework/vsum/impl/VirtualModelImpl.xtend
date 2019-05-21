@@ -1,4 +1,4 @@
-package tools.vitruv.framework.vsum
+package tools.vitruv.framework.vsum.impl
 
 import java.io.File
 import java.util.Collections
@@ -26,6 +26,8 @@ import tools.vitruv.framework.vsum.repositories.ModelRepositoryImpl
 import tools.vitruv.framework.vsum.repositories.ResourceRepositoryImpl
 import org.apache.log4j.Logger
 import org.eclipse.emf.common.util.URI
+import tools.vitruv.framework.vsum.InternalVirtualModel
+import tools.vitruv.framework.vsum.PropagatedChangeListener
 
 class VirtualModelImpl implements InternalVirtualModel {
 	private static val Logger LOGGER = Logger.getLogger(VirtualModelImpl.name)

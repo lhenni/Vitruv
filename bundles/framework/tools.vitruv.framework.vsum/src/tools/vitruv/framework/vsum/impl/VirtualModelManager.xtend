@@ -1,7 +1,8 @@
-package tools.vitruv.framework.vsum
+package tools.vitruv.framework.vsum.impl
 
 import java.util.Map
 import java.io.File
+import tools.vitruv.framework.vsum.InternalVirtualModel
 
 final class VirtualModelManager {
 	private Map<File, InternalVirtualModel> folderToVirtualModelMap;

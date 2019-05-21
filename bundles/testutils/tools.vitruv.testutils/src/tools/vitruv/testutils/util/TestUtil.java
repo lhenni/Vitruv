@@ -23,8 +23,8 @@ import tools.vitruv.framework.userinteraction.InternalUserInteractor;
 import tools.vitruv.framework.util.VitruviusConstants;
 import tools.vitruv.framework.vsum.InternalVirtualModel;
 import tools.vitruv.framework.vsum.VirtualModel;
-import tools.vitruv.framework.vsum.VirtualModelConfiguration;
-import tools.vitruv.framework.vsum.VirtualModelImpl;
+import tools.vitruv.framework.vsum.impl.VirtualModelConfiguration;
+import tools.vitruv.framework.vsum.impl.VirtualModelImpl;
 
 /**
  * Utility class for all Vitruvius test cases

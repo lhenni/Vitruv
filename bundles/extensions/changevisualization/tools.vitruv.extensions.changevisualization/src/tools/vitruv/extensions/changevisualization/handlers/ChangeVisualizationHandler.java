@@ -17,7 +17,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import tools.vitruv.extensions.changevisualization.ChangeVisualization;
 import tools.vitruv.framework.vsum.InternalVirtualModel;
-import tools.vitruv.framework.vsum.VirtualModelManager;
+import tools.vitruv.framework.vsum.impl.VirtualModelManager;
 
 /**
  * The plugin handler is used to react to clicks on the change visualization menu item.

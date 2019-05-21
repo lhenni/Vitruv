@@ -1,4 +1,4 @@
-package tools.vitruv.framework.vsum
+package tools.vitruv.framework.vsum.impl
 
 import tools.vitruv.framework.change.processing.ChangePropagationSpecification
 import tools.vitruv.framework.domains.VitruvDomain

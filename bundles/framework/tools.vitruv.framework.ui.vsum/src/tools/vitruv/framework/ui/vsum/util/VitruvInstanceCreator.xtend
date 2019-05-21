@@ -10,8 +10,8 @@ import tools.vitruv.framework.ui.monitorededitor.ProjectBuildUtils
 import org.eclipse.core.resources.ResourcesPlugin
 import tools.vitruv.framework.change.processing.ChangePropagationSpecification
 import java.util.Set
-import tools.vitruv.framework.vsum.VirtualModelConfigurationBuilder
-import tools.vitruv.framework.vsum.VirtualModelImpl
+import tools.vitruv.framework.vsum.impl.VirtualModelConfigurationBuilder
+import tools.vitruv.framework.vsum.impl.VirtualModelImpl
 import tools.vitruv.framework.userinteraction.UserInteractionFactory
 
 class VitruvInstanceCreator {

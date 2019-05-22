@@ -30,7 +30,7 @@ import java.util.Collection
 import tools.vitruv.framework.userinteraction.InternalUserInteractor
 import tools.vitruv.framework.userinteraction.UserInteractionListener
 import tools.vitruv.framework.change.interaction.UserInteractionBase
-import tools.vitruv.framework.userinteraction.UserInteractionFactory
+import tools.vitruv.framework.userinteraction.impl.UserInteractionFactoryImpl
 
 class ChangePropagatorImpl implements ChangePropagator, ChangePropagationObserver, UserInteractionListener {
 	static Logger logger = Logger.getLogger(ChangePropagatorImpl.getSimpleName())
@@ -147,7 +147,7 @@ class ChangePropagatorImpl implements ChangePropagator, ChangePropagationObserve
 		// retrieve user inputs from past changes, construct a UserInteractor which tries to reuse them:
 		val pastUserInputsFromChange = change.getUserInteractions()
 		if (!pastUserInputsFromChange.nullOrEmpty) {
-			userInteractor.decorateUserInteractionResultProvider([provider | UserInteractionFactory.instance.createPredefinedInteractionResultProvider(provider, pastUserInputsFromChange)]);
+			userInteractor.decorateUserInteractionResultProvider([provider | UserInteractionFactoryImpl.getInstance().createPredefinedInteractionResultProvider(provider, pastUserInputsFromChange)]);
 		}
 		//modelRepository.startRecording;
 		resourceRepository.startRecording;

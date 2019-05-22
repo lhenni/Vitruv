@@ -21,7 +21,7 @@ import tools.vitruv.framework.correspondence.CorrespondenceModel;
 import tools.vitruv.framework.domains.VitruvDomain;
 import tools.vitruv.framework.userinteraction.InternalUserInteractor;
 import tools.vitruv.framework.userinteraction.PredefinedInteractionResultProvider;
-import tools.vitruv.framework.userinteraction.UserInteractionFactory;
+import tools.vitruv.framework.userinteraction.impl.UserInteractionFactoryImpl;
 import tools.vitruv.framework.util.ResourceSetUtil;
 import tools.vitruv.framework.util.bridges.EMFBridge;
 import tools.vitruv.framework.util.datatypes.VURI;
@@ -72,9 +72,9 @@ public abstract class VitruviusUnmonitoredApplicationTest extends VitruviusTest 
 	private void createVirtualModel(final String testName) {
 		String currentTestProjectVsumName = testName + "_vsum_";
 		Iterable<VitruvDomain> domains = this.getVitruvDomains();
-		PredefinedInteractionResultProvider interactionProvider = UserInteractionFactory.instance.createPredefinedInteractionResultProvider(null);
+		PredefinedInteractionResultProvider interactionProvider = UserInteractionFactoryImpl.getInstance().createPredefinedInteractionResultProvider(null);
 		this.testUserInteractor = new TestUserInteraction(interactionProvider);
-		InternalUserInteractor userInteractor = UserInteractionFactory.instance.createUserInteractor(interactionProvider);
+		InternalUserInteractor userInteractor = UserInteractionFactoryImpl.getInstance().createUserInteractor(interactionProvider);
 		this.virtualModel = TestUtil.createVirtualModel(new File(workspace, currentTestProjectVsumName), true, domains,
 				createChangePropagationSpecifications(), userInteractor);
 		this.correspondenceModel = virtualModel.getCorrespondenceModel();

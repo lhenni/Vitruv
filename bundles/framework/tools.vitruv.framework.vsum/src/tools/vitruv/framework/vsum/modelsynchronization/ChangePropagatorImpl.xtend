@@ -152,7 +152,7 @@ class ChangePropagatorImpl implements ChangePropagator, ChangePropagationObserve
 		//modelRepository.startRecording;
 		resourceRepository.startRecording;
 		for (propagationSpecification : changePropagationProvider.
-			getChangePropagationSpecifications(change.changeDomain)) {
+			getChangePropagationSpecifications(change.changeDomain)) { // empty if change domain is null
 			propagateChangeForChangePropagationSpecification(change, propagationSpecification, changedResourcesTracker);
 		}
 		//consequentialChanges += modelRepository.endRecording();
@@ -168,7 +168,10 @@ class ChangePropagatorImpl implements ChangePropagator, ChangePropagationObserve
 
 		val consequentialChangesToRePropagate = propagatedChange.consequentialChanges.transactionalChangeSequence
 			.map[rewrapWithoutCorrespondenceChanges].filterNull.filter[containsConcreteChange]
-			.filter [changeDomain.shouldTransitivelyPropagateChanges]
+			.filter [
+				val domain = changeDomain
+				return domain !== null && domain.shouldTransitivelyPropagateChanges
+			]
 
 		for (changeToPropagate : consequentialChangesToRePropagate) {
 			resultingChanges += propagateSingleChange(changeToPropagate, changedResourcesTracker)
@@ -216,9 +219,16 @@ class ChangePropagatorImpl implements ChangePropagator, ChangePropagationObserve
 		} 
 	}
 
+	// returns null if the domain could not be determined
 	def private getChangeDomain(VitruviusChange change) {
 		val resolvedObjects = change.affectedEObjects.filter[!eIsProxy];
-		metamodelRepository.getDomain(resolvedObjects.head)
+		val domains = resolvedObjects.map[metamodelRepository.getDomain(it)].filterNull.toSet
+		if (domains.isEmpty) {
+			logger.warn("Could not determine domain of change: " + change)
+		} else if (domains.size > 1) {
+			logger.warn("Change affects objects from multiple domains: " + change)
+		}
+		return domains.head // null if domains is empty
 	}
 
 	private def void handleObjectsWithoutResource() {

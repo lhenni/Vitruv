@@ -1,7 +1,9 @@
 package tools.vitruv.dsls.commonalities.generator
 
 import java.util.HashMap
+import java.util.List
 import java.util.Map
+import java.util.function.BiConsumer
 import javax.inject.Inject
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.xtend.lib.annotations.Accessors
@@ -41,6 +43,7 @@ package class ReactionsGenerationContext {
 	// Since a commonality may have other commonalities as participations, commonality insert routines can potentially
 	// be found for all pairs of a commonality and its participations.
 	val Map<Pair<NamedElement, NamedElement>, FluentRoutineBuilder> commonalityInsertRoutineCache = new HashMap
+	val Map<Pair<NamedElement, NamedElement>, FluentRoutineBuilder> createIntermediateRootRoutineCache = new HashMap
 
 	def package wrappingContext(GenerationContext generationContext) {
 		this.generationContext = generationContext
@@ -49,6 +52,46 @@ package class ReactionsGenerationContext {
 
 	def private getMetadataModelKey(Concept concept) {
 		return #['commonalities', concept.name + VitruviusConstants.fileExtSeparator + concept.intermediateModelFileExtension]
+	}
+
+	def private getCreateIntermediateRootRoutine(NamedElement fromParticipationOrCommonality, Concept toConcept) {
+		val rootClassLiteralExpression = toConcept.rootClassLiteralExpression
+		createIntermediateRootRoutineCache.computeIfAbsent(Pair.of(fromParticipationOrCommonality, toConcept), [ 
+			create.routine('''intermediateCreateRoot_«toConcept.name»''')
+				.match [
+					requireAbsenceOf(toConcept.intermediateModelRootClass).correspondingTo(
+						rootClassLiteralExpression.key, rootClassLiteralExpression.value)
+				].action [
+					vall("intermediateRoot").create(toConcept.intermediateModelRootClass)
+					addCorrespondenceBetween("intermediateRoot").and(rootClassLiteralExpression.key, rootClassLiteralExpression.value) // TODO copy?
+					execute [
+						persistAsMetadataRoot(variable("intermediateRoot"), toConcept.metadataModelKey)
+					]
+				]
+		])
+	}
+
+	// returns a pair of the created expression and its initializer (allows for
+	// deferred initialization)
+	def Pair<XMemberFeatureCall, BiConsumer<RoutineTypeProvider, XMemberFeatureCall>> getRootClassLiteralExpression(Concept concept) {
+		return XbaseFactory.eINSTANCE.createXMemberFeatureCall -> [ RoutineTypeProvider typeProvider, XMemberFeatureCall expression |
+			val packageJvmType = typeProvider.findTypeByName(concept.intermediateModelPackageClassName.qualifiedName)
+			val packageLiteralsJvmType = typeProvider.findTypeByName(concept.intermediateModelPackageLiteralsClassName) as JvmDeclaredType
+			val rootLiteral = JvmTypeProviderHelper.findAttribute(packageLiteralsJvmType, concept.intermediateModelRootClassLiteral)
+			typeProvider.imported(packageJvmType)
+			// TODO assign expression lazy as well possible?
+			expression.set(packageJvmType.memberFeatureCall(packageLiteralsJvmType).memberFeatureCall(rootLiteral))
+		]
+	}
+
+	def private persistAsMetadataRoot(extension RoutineTypeProvider typeProvider, XFeatureCall root, List<String> metadataModelKey) {
+		XbaseFactory.eINSTANCE.createXFeatureCall => [
+			implicitReceiver = routineUserExecution
+			feature = routineUserExecutionType.findMethod('persistAsMetadataRoot')
+			explicitOperationCall = true
+			featureCallArguments += #[root]
+			featureCallArguments += metadataModelKey.map[stringLiteral]
+		]
 	}
 
 	def private getInsertRoutine(NamedElement fromParticipationOrCommonality, Commonality toCommonality) {

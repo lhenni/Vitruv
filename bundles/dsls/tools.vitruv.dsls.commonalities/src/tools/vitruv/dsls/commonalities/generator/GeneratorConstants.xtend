@@ -128,4 +128,19 @@ class GeneratorConstants {
 		new GenericClassNameGenerator(conceptName.intermediateModelPackageName,
 			conceptName.intermediateModelClassesPrefix + "Package")
 	}
+
+	@Pure
+	def static getIntermediateModelPackageLiteralsClassName(Concept concept) {
+		concept.intermediateModelPackageClassName.qualifiedName.modelPackageLiteralsClassName
+	}
+
+	@Pure
+	def static getModelPackageLiteralsClassName(String packageClassQN) {
+		packageClassQN + "$Literals"
+	}
+
+	@Pure
+	def static getIntermediateModelRootClassLiteral(Concept concept) {
+		concept.name.toUpperCase + "_ROOT"
+	}
 }

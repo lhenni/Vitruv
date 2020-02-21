@@ -23,10 +23,12 @@ import tools.vitruv.dsls.commonalities.language.elements.EFeatureAdapter
 import tools.vitruv.dsls.commonalities.language.elements.Metaclass
 import tools.vitruv.dsls.commonalities.language.elements.ResourceMetaclass
 import tools.vitruv.dsls.commonalities.language.elements.VitruvDomainAdapter
+import tools.vitruv.extensions.dslruntime.commonalities.intermediatemodelbase.IntermediateModelBasePackage
 import tools.vitruv.extensions.dslruntime.commonalities.resources.ResourcesPackage
 
 import static com.google.common.base.Preconditions.*
 
+import static extension edu.kit.ipd.sdq.commons.util.java.lang.IterableUtil.*
 import static extension tools.vitruv.dsls.commonalities.generator.GeneratorConstants.*
 import static extension tools.vitruv.dsls.commonalities.language.extensions.CommonalitiesLanguageModelExtensions.*
 
@@ -45,6 +47,7 @@ package class GenerationContext {
 	// TODO cache for complete ResourceSet (but: how to known when to cleanup)? Or don't cache at all?
 	var Map<Commonality, EClass> intermediateModelClassCache = new HashMap
 	var Map<String, EPackage> intermediateModelPackageCache = new HashMap
+	var Map<String, EClass> intermediateModelRootCache = new HashMap
 	var Map<String, JvmGenericType> domainTypes = new HashMap
 	var Map<String, JvmGenericType> domainProviderTypes = new HashMap
 
@@ -108,6 +111,18 @@ package class GenerationContext {
 	def package getIntermediateModelPackage(String conceptName) {
 		intermediateModelPackageCache.computeIfAbsent(conceptName, [
 			resourceSet.getResource(conceptName.intermediateModelOutputUri, false).contents.head as EPackage
+		])
+	}
+
+	def package getIntermediateModelRootClass(Concept concept) {
+		concept.name.intermediateModelRootClass
+	}
+
+	def package getIntermediateModelRootClass(String conceptName) {
+		intermediateModelRootCache.computeIfAbsent(conceptName, [
+			conceptName.intermediateModelPackage.EClassifiers.filter(EClass).findFirst [
+				ESuperTypes.containsAny[it == IntermediateModelBasePackage.eINSTANCE.root]
+			]
 		])
 	}
 

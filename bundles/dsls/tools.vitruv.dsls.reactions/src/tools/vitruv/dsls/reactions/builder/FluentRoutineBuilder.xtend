@@ -1,5 +1,6 @@
 package tools.vitruv.dsls.reactions.builder
 
+import java.util.function.BiConsumer
 import java.util.function.Consumer
 import java.util.function.Function
 import org.eclipse.emf.ecore.EClass
@@ -316,6 +317,15 @@ class FluentRoutineBuilder extends FluentReactionsSegmentChildBuilder {
 			statement.correspondenceSource = correspondingElement(element)
 			new TaggedWithBuilder(builder, statement)
 		}
+
+		def <T extends XExpression> correspondingTo(T sourceExpression, BiConsumer<RoutineTypeProvider, T> initializer) {
+			statement.correspondenceSource = ReactionsLanguageFactory.eINSTANCE.createCorrespondingObjectCodeBlock => [
+				code = sourceExpression.whenJvmTypes [
+					initializer.accept(typeProvider, it)
+				]
+			]
+			new TaggedWithBuilder(builder, statement)
+		}
 	}
 
 	static class RetrieveModelElementMatcherStatementCorrespondenceElementBuilder {
@@ -462,6 +472,14 @@ class FluentRoutineBuilder extends FluentReactionsSegmentChildBuilder {
 		def addCorrespondenceBetween(String existingElement) {
 			val statement = ReactionsLanguageFactory.eINSTANCE.createCreateCorrespondence => [
 				firstElement = existingElement(existingElement)
+			]
+			routine.action.actionStatements += statement
+			new CorrespondenceTargetBuilder(builder, statement)
+		}
+
+		def <T extends XExpression> addCorrespondenceBetween(T elementExpression, BiConsumer<RoutineTypeProvider, T> initializer) {
+			val statement = ReactionsLanguageFactory.eINSTANCE.createCreateCorrespondence => [
+				firstElement = existingElement(elementExpression, initializer)
 			]
 			routine.action.actionStatements += statement
 			new CorrespondenceTargetBuilder(builder, statement)
@@ -700,6 +718,11 @@ class FluentRoutineBuilder extends FluentReactionsSegmentChildBuilder {
 			new TaggedWithBuilder(builder, statement)
 		}
 
+		def <T extends XExpression> and(T elementExpression, BiConsumer<RoutineTypeProvider, T> initializer) {
+			statement.secondElement = existingElement(elementExpression, initializer)
+			new TaggedWithBuilder(builder, statement)
+		}
+
 		def private dispatch setSecondElement(CreateCorrespondence correspondenceStatement,
 			ExistingElementReference existingElement) {
 			correspondenceStatement.secondElement = existingElement
@@ -715,6 +738,14 @@ class FluentRoutineBuilder extends FluentReactionsSegmentChildBuilder {
 		ReactionsLanguageFactory.eINSTANCE.createExistingElementReference => [
 			code = XbaseFactory.eINSTANCE.createXFeatureCall.whenJvmTypes [
 				feature = correspondingMethodParameter(name)
+			]
+		]
+	}
+
+	def private <T extends XExpression> existingElement(T expression, BiConsumer<RoutineTypeProvider, T> initializer) {
+		ReactionsLanguageFactory.eINSTANCE.createExistingElementReference => [
+			code = expression.whenJvmTypes [
+				initializer.accept(typeProvider, it)
 			]
 		]
 	}
